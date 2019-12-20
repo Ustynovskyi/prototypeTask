@@ -17,6 +17,11 @@
 
         </div>
 
+        <div ng-if="taskThreeResult">
+            <p class="task">What species appeared in the most number of Star Wars films?</p>
+            <p class="result"  ng-repeat="(key, item) in taskThreeResult.result">{{item._id}} ({{item.filmscount}})</p>
+        </div>
+
         <div ng-if="taskFourResult">
             <p class="task">What planet in Star Wars universe provided largest number of vehicle pilots?</p>
             <p class="result"  ng-repeat="(key, item) in taskFourResult.result">Planet: {{item.name}} - Pilots: ({{item.pilots.length}}) {{item.pilots_formated.join(', ')}}</p>
@@ -50,6 +55,16 @@
                         $scope.taskTwoResult={result:response.data.result};
                     }
                 });
+
+
+            $http.get("/getTaskThree")
+                .then(function(response) {
+                    if(response.data.code=='1')
+                    {
+                        $scope.taskThreeResult={result:response.data.result};
+                    }
+                });
+
 
             $http.get("/getTaskFour")
                 .then(function(response) {
