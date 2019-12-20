@@ -68,6 +68,28 @@ class Controller
     }
 
 
+    private function doGetTaskTwo()
+    {
+        $films=$this->Api->getCollection( 'films');
+
+        $mostFilms=$films->aggregate([
+            ['$unwind'=>'$characters'],
+            [ '$group'=> [ '_id' => '$characters' , 'number' => [ '$sum' => 1 ] ] ],
+            [ '$sort' => [ 'number' => -1 ] ],
+            [ '$limit' => 1 ]
+        ]);
+
+
+        foreach($mostFilms as $film) {$charId=$film->_id;}
+
+
+        $people=$this->Api->getCollection( 'people');
+
+        $char=$people->findOne(['id'=>$charId]);
+
+
+        return $this->response(array('line'=>__LINE__, 'code'=>1, 'result'=>$char->name));
+    }
 
 
 
