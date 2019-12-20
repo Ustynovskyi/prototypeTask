@@ -35,11 +35,10 @@ body {
 
 .task {
 	color:#fff;
-	padding-top: 10vh;
+	padding: 10vh 0 5vh;
 }
 
 .result
 {
 	color: #FCE619;;
-	padding-top: 5vh;
 }
