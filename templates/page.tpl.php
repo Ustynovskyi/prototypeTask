@@ -7,9 +7,11 @@
 </div>
 
 <script type="text/javascript">
-    var protoTest=angular.module('testApp',[]).controller('testPage', ['$scope', function($scope) {
+
+
+    var protoTest=angular.module('testApp',[]).controller('testPage',  function($scope, $http) {
         $scope.runTestTasks=function(){
 
         }
-    }]);
+    });
 </script>

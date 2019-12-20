@@ -21,6 +21,10 @@ class Controller
      */
     private $Request;
 
+    /**
+     * @var String
+     */
+    private $template;
 
     public function __construct()
     {
@@ -35,16 +39,32 @@ class Controller
     private function init()
     {
 
-        if($this->Request->getType()=='get')
-            $this->View->parsePage('index');
+        if(!$this->Request->getAction()) $action='index';
+        else $action=$this->Request->getAction();
 
+        $funcName='do'.ucfirst($action);
+        if(!method_exists($this, $funcName)) {
+            http_response_code(400);
+            die('Method not allowed');
+        }
 
+        $this->$funcName();
+
+        $this->View->parsePage($this->template);
         $this->View->render();
     }
 
+
+    private function doIndex()
+    {
+        $this->template='index';
+    }
+
+
     private function response($responce)
     {
-        $this->View->assign('responce', $responce);
+        echo(json_encode($responce));
+        die();
     }
 
 

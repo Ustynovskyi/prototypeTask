@@ -37,4 +37,12 @@ class Request
         }
         return self :: $_instance;
     }
+
+    public function getAction()
+    {
+        if($this->getUri()=='' || $this->getUri()=='/') return false;
+        return (explode('/', $this->getUri()))[1];
+
+    }
+
 }
