@@ -68,6 +68,17 @@ class Controller
     }
 
 
+    private function doGetTaskOne()
+    {
+
+        $films=$this->Api->getCollection( 'films');
+
+
+        $longestOpening=$films->findOne([], ['sort'=>['openeing-crawl'=>-1]]);
+
+
+        return $this->response(array('line'=>__LINE__, 'code'=>1, 'result'=>$longestOpening->title));
+    }
 
 
 
