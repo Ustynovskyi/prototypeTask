@@ -68,6 +68,41 @@ class Controller
     }
 
 
+    private function doGetTaskThree()
+    {
+
+        $species=$this->Api->getCollection( 'species');
+
+        $list=$species->aggregate([
+            ['$unwind'=>'$people'],
+            [
+                '$lookup' => [
+                    'from' => 'people',
+                    'localField' => 'people',
+                    'foreignField' => 'id',
+                    'as' => 'species_people'
+                ]
+            ],
+            ['$unwind'=>'$species_people'],
+            [
+                '$lookup' => [
+                    'from' => 'films',
+                    'localField' => 'species_people.id',
+                    'foreignField' => 'characters',
+                    'as' => 'species_people_films'
+                ]
+            ],
+            ['$unwind'=>'$species_people_films'],
+            ['$group'=> [
+                '_id' => '$name',
+                'filmscount' => [ '$sum' => 1]
+            ]],
+            ['$sort'=>['filmscount'=>-1]]
+        ])->toArray();
+
+
+        return $this->response(array('line'=>__LINE__, 'code'=>1, 'result'=>$list));
+    }
 
 
 
