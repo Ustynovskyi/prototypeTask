@@ -1,5 +1,9 @@
 <?php
 
+/**
+ * This class is used for handling XHTTP requests
+ */
+
 namespace App;
 
 
@@ -18,12 +22,19 @@ class Request
 
     }
 
+    /**
+     * @return string
+     */
     public function getUri() {
 
         return $this->_SERVER['REQUEST_URI'];
 
     }
 
+    /**
+     * returns request types like POST or GET
+     * @return string
+     */
     public function getType()
     {
         return strtolower($_SERVER['REQUEST_METHOD']);
@@ -38,6 +49,11 @@ class Request
         return self :: $_instance;
     }
 
+    /**
+     * Get action from XHTTP request specified as first string in GET request after '/' symbol
+     * Request format as following "/<action anme>"
+     * @return string
+     */
     public function getAction()
     {
         if($this->getUri()=='' || $this->getUri()=='/') return false;

@@ -1,11 +1,18 @@
 <?php
 
+/**
+ * This class maintains MongoDB connection and handles some of MongoDB intercations
+ */
+
 namespace App;
 
 
 class Api
 {
 
+    /**
+     * @var \MongoDB\Client
+     */
     private $connection;
     protected static $_instance;
 
@@ -28,6 +35,11 @@ class Api
         $this->connection = new \MongoDB\Client('mongodb://candidate:PrototypeRocks123654@ds345028.mlab.com:45028/star-wars');
     }
 
+    /**
+     * Function to get collection from MongoDB database
+     * @param string $collectionName
+     * @return \MongoDB\Collection
+     */
     public function getCollection($collectionName)
     {
         return $this->connection->selectCollection('star-wars', $collectionName);
