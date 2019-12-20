@@ -1,0 +1,30 @@
+@font-face{
+		font-family:'Roboto';
+		src: url(/fonts/roboto.woff2);
+}
+
+
+body {
+	font: 1vw Roboto;
+	color: #fff;
+	text-align: center;
+	background: #000;
+}
+
+
+.buttonYellow {
+	background: #fde71f;
+	font-family: Roboto;
+	color:#000;
+	border-radius: 1vw;
+	font-weight: bold;
+	font-size: 2vw;
+	padding: 2vw;
+	box-shadow: 0px 2vh 2vh #d0c240;
+}
+
+.buttonYellow:hover {
+	background: #fdeb63;
+	margin-top:1vh;
+	box-shadow: 0px 1vh 2vh #d0c240;
+}
