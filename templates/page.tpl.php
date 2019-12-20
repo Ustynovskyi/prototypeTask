@@ -4,9 +4,16 @@
         <br/>
         <button type="button" ng-click="runTestTasks()" class="buttonYellow">Do. Or do not. There is no try</button>
 
+
         <div ng-if="taskOneResult">
             <p class="task">Which of all Star Wars movies has the longest opening crawl?</p>
             <p class="result">{{taskOneResult.result}}</p>
+        </div>
+
+        <div ng-if="taskTwoResult">
+            <p class="task">What character appeared in most of the Star Wars films?</p>
+            <p class="result">{{taskTwoResult.result}}</p>
+
         </div>
     </div>
 </div>
@@ -19,11 +26,21 @@
         $scope.runTestTasks=function(){
 
 
+
             $http.get("/getTaskOne")
                 .then(function(response) {
                     if(response.data.code=='1')
                     {
                         $scope.taskOneResult={result:response.data.result};
+                    }
+                });
+
+            $http.get("/getTaskTwo")
+                .then(function(response) {
+                    if(response.data.code=='1')
+                    {
+                        $scope.taskTwoResult={result:response.data.result};
+
                     }
                 });
         }
