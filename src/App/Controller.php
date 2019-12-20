@@ -68,6 +68,89 @@ class Controller
     }
 
 
+    private function doGetTaskFour()
+    {
+
+
+        $planets = $this->Api->getCollection( 'planets');
+
+        $list=$planets->aggregate([
+            ['$lookup'=>[
+                'from' => 'people',
+                'localField' => 'id',
+                'foreignField' =>'homeworld',
+
+                'as' => 'planet_characters'
+            ]
+            ],
+            ['$unwind'=>'$planet_characters'],
+            [
+                '$lookup'=>[
+                    'from' => 'starships',
+                    'let' => ['character_id' => '$planet_characters.id'],
+                    'pipeline' => [
+                        ['$match' => ['$expr'=>['$in'=>['$$character_id', '$pilots']]]]
+                    ],
+
+                    'as' => 'character_starships'
+                ]
+            ],
+            [
+                '$lookup'=>[
+                    'from' => 'vehicles',
+                    'let' => ['character_id' => '$planet_characters.id'],
+                    'pipeline' => [
+                        ['$match' => ['$expr'=>['$in'=>['$$character_id', '$pilots']]]]
+                    ],
+
+                    'as' => 'character_vehicles'
+                ]
+            ],
+            ['$lookup'=>[
+                'from' => 'species',
+                'let' => ['character_id' => '$planet_characters.id'],
+                'pipeline' => [
+                    ['$match' => ['$expr'=>['$in'=>['$$character_id', '$people']]]]
+                ],
+                'as' => 'planet_characters.character_species'
+            ]
+            ],
+
+            ['$match' => [
+                '$expr' => [
+                    '$or'=>[
+                        ['$gt' => [['$size' => ['$character_starships']], 0]],
+                        ['$gt' => [['$size' => ['$character_vehicles']], 0]]
+                    ]
+                ]
+            ]],
+            [
+                '$group' => [
+                    '_id' => [
+                        '_id'=>'$_id',
+                        'name' => '$_name'
+                    ],
+                    'pilots' =>[
+                        '$push' => [
+                            "name" => '$planet_characters.name',
+                            'species' =>  [ '$arrayElemAt' => ['$planet_characters.character_species',0] ]
+                        ]
+                    ],
+                    'pilotscount' => [ '$sum' => 1]
+                ]
+            ],
+            ['$sort'=>['pilotscount'=>-1]]
+
+
+        ])->toArray();
+        foreach($list as $item) {
+            $item->pilots_formated=[];
+            foreach($item->pilots  as $pilot)  $item->pilots_formated[]=$pilot->name.' - '.(isset($pilot->species) ? $pilot->species->name: 'unknown');
+        }
+
+
+        return $this->response(array('line'=>__LINE__, 'code'=>1, 'result'=>$list));
+    }
 
     private function doGetTaskOne()
     {
