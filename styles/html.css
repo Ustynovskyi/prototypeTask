@@ -9,12 +9,12 @@ body {
 	color: #fff;
 	text-align: center;
 	background: #000;
+	font-family: "Roboto",sans-serif;
 }
 
 
 .buttonYellow {
 	background: #fde71f;
-	font-family: Roboto;
 	color:#000;
 	border-radius: 1vw;
 	font-weight: bold;
@@ -29,6 +29,17 @@ body {
 	box-shadow: 0px 1vh 2vh #d0c240;
 }
 
+.task, .result {
+	font-size: 2vw;
+}
+
 .task {
 	color:#fff;
+	padding-top: 10vh;
+}
+
+.result
+{
+	color: #FCE619;;
+	padding-top: 5vh;
 }
