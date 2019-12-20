@@ -68,37 +68,85 @@ class Controller
     }
 
 
-    private function doGetTaskThree()
+    private function doGetTaskFour()
     {
 
-        $species=$this->Api->getCollection( 'species');
 
-        $list=$species->aggregate([
-            ['$unwind'=>'$people'],
+        $planets = $this->Api->getCollection( 'planets');
+
+        $list=$planets->aggregate([
+            ['$lookup'=>[
+                'from' => 'people',
+                'localField' => 'id',
+                'foreignField' =>'homeworld',
+
+                'as' => 'planet_characters'
+            ]
+            ],
+            ['$unwind'=>'$planet_characters'],
             [
-                '$lookup' => [
-                    'from' => 'people',
-                    'localField' => 'people',
-                    'foreignField' => 'id',
-                    'as' => 'species_people'
+                '$lookup'=>[
+                    'from' => 'starships',
+                    'let' => ['character_id' => '$planet_characters.id'],
+                    'pipeline' => [
+                        ['$match' => ['$expr'=>['$in'=>['$$character_id', '$pilots']]]]
+                    ],
+
+                    'as' => 'character_starships'
                 ]
             ],
-            ['$unwind'=>'$species_people'],
             [
-                '$lookup' => [
-                    'from' => 'films',
-                    'localField' => 'species_people.id',
-                    'foreignField' => 'characters',
-                    'as' => 'species_people_films'
+                '$lookup'=>[
+                    'from' => 'vehicles',
+                    'let' => ['character_id' => '$planet_characters.id'],
+                    'pipeline' => [
+                        ['$match' => ['$expr'=>['$in'=>['$$character_id', '$pilots']]]]
+                    ],
+
+                    'as' => 'character_vehicles'
                 ]
             ],
-            ['$unwind'=>'$species_people_films'],
-            ['$group'=> [
-                '_id' => '$name',
-                'filmscount' => [ '$sum' => 1]
+            ['$lookup'=>[
+                'from' => 'species',
+                'let' => ['character_id' => '$planet_characters.id'],
+                'pipeline' => [
+                    ['$match' => ['$expr'=>['$in'=>['$$character_id', '$people']]]]
+                ],
+                'as' => 'planet_characters.character_species'
+            ]
+            ],
+
+            ['$match' => [
+                '$expr' => [
+                    '$or'=>[
+                        ['$gt' => [['$size' => ['$character_starships']], 0]],
+                        ['$gt' => [['$size' => ['$character_vehicles']], 0]]
+                    ]
+                ]
             ]],
-            ['$sort'=>['filmscount'=>-1]]
+            [
+                '$group' => [
+                    '_id' => [
+                        '_id'=>'$_id',
+                        'name' => '$_name'
+                    ],
+                    'pilots' =>[
+                        '$push' => [
+                            "name" => '$planet_characters.name',
+                            'species' =>  [ '$arrayElemAt' => ['$planet_characters.character_species',0] ]
+                        ]
+                    ],
+                    'pilotscount' => [ '$sum' => 1]
+                ]
+            ],
+            ['$sort'=>['pilotscount'=>-1]]
+
+
         ])->toArray();
+        foreach($list as $item) {
+            $item->pilots_formated=[];
+            foreach($item->pilots  as $pilot)  $item->pilots_formated[]=$pilot->name.' - '.(isset($pilot->species) ? $pilot->species->name: 'unknown');
+        }
 
 
         return $this->response(array('line'=>__LINE__, 'code'=>1, 'result'=>$list));

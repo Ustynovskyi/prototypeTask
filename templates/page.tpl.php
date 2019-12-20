@@ -4,9 +4,9 @@
         <br/>
         <button type="button" ng-click="runTestTasks()" class="buttonYellow">Do. Or do not. There is no try</button>
 
-        <div ng-if="taskThreeResult">
-            <p class="task">What species appeared in the most number of Star Wars films?</p>
-            <p class="result"  ng-repeat="(key, item) in taskThreeResult.result">{{item._id}} ({{item.filmscount}})</p>
+        <div ng-if="taskFourResult">
+            <p class="task">What planet in Star Wars universe provided largest number of vehicle pilots?</p>
+            <p class="result"  ng-repeat="(key, item) in taskFourResult.result">Planet: {{item.name}} - Pilots: ({{item.pilots.length}}) {{item.pilots_formated.join(', ')}}</p>
         </div>
     </div>
 </div>
@@ -19,11 +19,11 @@
         $scope.runTestTasks=function(){
 
 
-            $http.get("/getTaskThree")
+            $http.get("/getTaskFour")
                 .then(function(response) {
                     if(response.data.code=='1')
                     {
-                        $scope.taskThreeResult={result:response.data.result};
+                        $scope.taskFourResult={result:response.data.result};
                     }
                 });
         }
