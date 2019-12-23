@@ -15,3 +15,9 @@ Folder structure
 - styles | null.css to remove any browser-specific default styles and html.css for project styles
 - templates | html templates of project
 - vendor | php addons for MongoDB connection
+
+
+MongoDB notes:
+- table `vehicles` has duplicate entries
+- table `characters` is incomplete, characters are missing species
+- table `transport` is empty
